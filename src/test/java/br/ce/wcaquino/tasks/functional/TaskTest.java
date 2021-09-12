@@ -1,5 +1,7 @@
 package br.ce.wcaquino.tasks.functional;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
@@ -7,19 +9,25 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 
 public class TaskTest {
 	
-	public WebDriver accessToApplication() {
-		WebDriver driver = new ChromeDriver();
-		driver.navigate().to("http://localhost:8001/tasks");
+	public WebDriver accessToApplication() throws MalformedURLException {
+		// New ChromeDriver() removido por conta que a seleção do Driver vai ser orquestrada pelo Hub
+		// WebDriver driver = new ChromeDriver();
+		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+		WebDriver driver = new RemoteWebDriver(new URL("http://172.18.0.1:4444/wd/hub"), capabilities);
+		
+		driver.navigate().to("http://192.168.1.10:8001/tasks");
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		return driver;
 	}
 	
 	@Test
-	public void shouldSaveTaskWithSuccess() {
+	public void shouldSaveTaskWithSuccess() throws MalformedURLException {
 		WebDriver driver = accessToApplication();
 		
 		try {
@@ -36,7 +44,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void shouldNotSaveTaskWithoutDescription() {
+	public void shouldNotSaveTaskWithoutDescription() throws MalformedURLException {
 		WebDriver driver = accessToApplication();
 		
 		try {
@@ -52,7 +60,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void shouldNotSaveTaskWithoutDueDate() {
+	public void shouldNotSaveTaskWithoutDueDate() throws MalformedURLException {
 		WebDriver driver = accessToApplication();
 		
 		try {
@@ -68,7 +76,7 @@ public class TaskTest {
 	}
 	
 	@Test
-	public void shouldNotSaveTaskWithPastDueDate() {
+	public void shouldNotSaveTaskWithPastDueDate() throws MalformedURLException {
 		WebDriver driver = accessToApplication();
 		
 		try {
